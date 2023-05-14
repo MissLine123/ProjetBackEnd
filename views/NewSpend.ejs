@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Nouvelle dépense</h1>
+    <form action="/submit-spend" method="post">
+    <label for="date">Date</label>
+    <input type="date" name="date" id="date">
+<br>
+    <label for="montant">Montant</label>
+    <input type="number" name="montant" id="montant">
+<br>
+    <label for="remarque">Remarque</label>
+    <input type="text" name="remarque" id="remarque">
+
+<br>
+
+    <input type="submit" value="Enregistrer une nouvelle dépense">
+</body>
+</html>

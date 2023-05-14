@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<!--
+    <h1>date:
+        <%#= data.date %>
+    </h1>
+    <h3>
+        Montant: <%#= data.montant %>
+    </h3>
+    <p>
+        remarque : <%#= data.remarque %> 
+    </p>
+
+
+--> 
+
+  <h1>Editer la dépense:</h1>  
+  <form action="/spend/edit/<%= data.id %>?_method=PUT" method="post">
+    <label for="date">Date</label>
+    <input type="date" name="date" id="date" value="<%= data.date %>">
+<br>
+    <label for="montant">Montant</label>
+    <input type="number" name="montant" id="montant" value="<%=data.montant %>">
+<br>
+    <label for="remarque">Remarque</label>
+    <input type="text" name="remarque" id="remarque" value="<%=data.remarque %>">
+
+<br>
+
+    <input type="submit" value="Enregistrer une nouvelle dépense">
+</form>
+   
+
+    <form action="/spend/delete/<%= data.id %>?_method=DELETE" method="post">
+
+      <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" >Supprimer la dépense</button>
+    </form>
+
+ 
+</body>
+</html>
