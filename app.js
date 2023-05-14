@@ -90,16 +90,16 @@ app.post('/api/login', function(req, res){
         //     res.status(404).send("Wrong password");
         // }
 
-//
-//        if(!bcrypt.compareSync(req.body.password, user.password)){
-//            res.status(404).send("Wrong password");
-//        }
-//        const accessToken = createTokens(user);
-//        res.cookie("accessToken", accessToken, {
-//            maxAge: 60*60*24*30, //1 mois: 60s * 60min * 24h * 30j
-//            httpOnly: true
-//        });
-       res.json("LOGGED IN")
+
+        if(!bcrypt.compareSync(req.body.password, user.password)){
+            res.status(404).send("Wrong password");
+        }
+        const accessToken = createTokens(user);
+        res.cookie("accessToken", accessToken, {
+            maxAge: 60*60*24*30, //1 mois: 60s * 60min * 24h * 30j
+            httpOnly: true
+        });
+       res.redirect("http://localhost:3000/allspend")
 
 
         //res.render('Userpage', {data : user})
@@ -109,11 +109,11 @@ app.post('/api/login', function(req, res){
 
 
 
-//app.get('/',validateToken, function(req, res) {
-//    User.find().then((data)=>{
-//        res.json( {data : data})
-//    })
-//})
+app.get('/',validateToken, function(req, res) {
+   User.find().then((data)=>{
+        res.json( {data : data})
+    })
+})
 
 app.get('/newspend', function(req, res){
     res.render('NewSpend');
@@ -137,11 +137,11 @@ app.post('/submit-spend', function(req, res){
 app.get('/allspend', function(req, res){
     Spend.find().then((data) => {
      
-         res.render('Allspend', {data: data});
+         //res.render('Allspend', {data: data});
      
      
          // res.json({data: data});
-     //   res.json(data);
+       res.json(data);
     })
 
 })
