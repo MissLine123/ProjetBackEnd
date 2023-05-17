@@ -38,7 +38,7 @@ mongoose.connect(url, {
     useNewUrlParser: true, 
     useUnifiedTopology: true
 }).then(console.log("MongoDB connected"))
-.catch(err => console.log(err));
+.catch(err => console.log(err)); 
 
 
 //APPELLES DES MODELES
@@ -124,12 +124,10 @@ app.post('/submit-spend', function(req, res){
        date: req.body.date,
        montant: req.body.montant,
        remarque: req.body.remarque,
-      
-       
    } )
    Data.save().then(()=>{
     console.log("Dépense ajoutée");
-    res.redirect('/allspend')
+    res.redirect('http://localhost:3000/allspend')
     
     }).catch(err => {console.log(err)});;
 });
@@ -147,6 +145,7 @@ app.get('/allspend', function(req, res){
 })
 
 app.get('/spend/:id', function(req, res){
+    console.log(req.params.id);
     Spend.findOne({
        _id: req.params.id})
        .then(data => { res.render('SpendEdit', {data:data});})
@@ -154,10 +153,11 @@ app.get('/spend/:id', function(req, res){
    });
 
 app.delete('/spend/delete/:id', function (req, res) {
+    console.log(req.params.id);
     Spend.findOneAndDelete({
         _id: req.params.id
     }).then(() => { console.log("Data deleted successfully");
-    res.redirect('/allspend');
+    res.redirect('http://localhost:3000/allspend');
      }).catch(err => {console.log(err)});
 });
 
@@ -171,7 +171,7 @@ app.put('/spend/edit/:id', function (req, res) {
     Spend.updateOne({_id: req.params.id},{$set:Data}).then(
         (data) => {
         console.log(data);
-        res.redirect('/allspend')
+        res.redirect('http://localhost:3000/allspend')
         }
       ).catch (err => console.log(err));
 });
