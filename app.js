@@ -44,6 +44,8 @@ mongoose.connect(url, {
 //APPELLES DES MODELES
 var User = require('./modeles/User');
 var Spend = require('./modeles/Spend');
+var multer = require('multer');
+var Categorie = require('./modeles/Categorie')
 
 
 
@@ -59,18 +61,18 @@ app.post('/api/signup', function(req, res){
     })
     Data.save().then(()=>{
         console.log("Utilisateur ajouté");
-        res.redirect('/login');
+        res.redirect('http://localhost:3000/login');
 
     }).catch(err => {console.log(err)});
 })
 
 
-//Affichage formulaire inscription
+// Affichage formulaire inscription
 app.get('/newuser', function(req, res){
     res.render('Signup');
 })
 
-//Afichage formulaire de connexion
+// Afichage formulaire de connexion
 app.get('/login', function(req, res){
     res.render('Login');
 
@@ -115,19 +117,23 @@ app.get('/',validateToken, function(req, res) {
     })
 })
 
-app.get('/newspend', function(req, res){
-    res.render('NewSpend');
-});
+
+
+// app.get('/newspend', function(req, res){
+//     res.render('NewSpend');
+// });
 
 app.post('/submit-spend', function(req, res){
     const Data = new Spend({
-       date: req.body.date,
-       montant: req.body.montant,
-       remarque: req.body.remarque,
+        date_depense: req.body.date_depense,
+        montant_depense: req.body.montant_depense,
+        remarque_depense: req.body.remarque_depense,
+        logoName: req.body.logoName,
+        nom_categorie: req.body.nom_categorie,
    } )
    Data.save().then(()=>{
     console.log("Dépense ajoutée");
-    res.redirect('http://localhost:3000/allspend')
+    res.redirect('http://localhost:3000/portefeuille')
     
     }).catch(err => {console.log(err)});;
 });
@@ -148,7 +154,7 @@ app.get('/spend/:id', function(req, res){
     console.log(req.params.id);
     Spend.findOne({
        _id: req.params.id})
-       .then(data => { res.render('SpendEdit', {data:data});})
+       .then(data => { res.json(data);})
        .catch(err =>{ console.log(err)});
    });
 
@@ -157,24 +163,48 @@ app.delete('/spend/delete/:id', function (req, res) {
     Spend.findOneAndDelete({
         _id: req.params.id
     }).then(() => { console.log("Data deleted successfully");
-    res.redirect('http://localhost:3000/allspend');
+    res.redirect('http://localhost:3000/portefeuille');
      }).catch(err => {console.log(err)});
 });
 
 app.put('/spend/edit/:id', function (req, res) {
     const Data = {
-        date: req.body.date,
-        montant: req.body.montant,
-        remarque: req.body.remarque,
+        date_depense: req.body.date_depense,
+        montant_depense: req.body.montant_depense,
+        remarque_depense: req.body.remarque_depense,
+        logoName: req.body.logoName,
+        nom_categorie: req.body.nom_categorie,
         
     };
     Spend.updateOne({_id: req.params.id},{$set:Data}).then(
         (data) => {
         console.log(data);
-        res.redirect('http://localhost:3000/allspend')
+        res.redirect('http://localhost:3000/portefeuille')
         }
       ).catch (err => console.log(err));
 });
+app.post('/submit-categorie', function(req,res){
+    const Data = new Categorie({
+        nom_categorie : req.body.nom_categorie,
+        logoName : req.body.logoName, 
+        type_categorie : req.body.type_categorie, 
+     
+});
+
+Data.save().then(()=>{
+    console.log('Catégorie Added successfully');
+    res.redirect('http://localhost:3000/newspend')
+}).catch(err => console.log(err));
+
+});
+app.get('/allcategories', function(req, res){
+    Categorie.find().then((data) => {
+     
+      
+       res.json(data);
+    })
+
+})
 
 
 var server = app.listen(5000, function(){

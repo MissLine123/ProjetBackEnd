@@ -1,9 +1,11 @@
 const  mongoose = require('mongoose');
 
 const spendSchema = mongoose.Schema({
-    date : {type: String},
-    montant : {type: Number},
-    remarque : {type: String},
+    date_depense : {type: String},
+    montant_depense : {type: Number},
+    remarque_depense : {type: String},
+    logoName : {type: String},
+    nom_categorie : {type: String}
   
   
 });
