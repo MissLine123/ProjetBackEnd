@@ -1,7 +1,7 @@
 const {sign, verify} = require ('jsonwebtoken');
 
 const createTokens = (user) => {
-    const accessToken = sign({username: user.username, password: user.password}, "SECRET")
+    const accessToken = sign({name: user.name}, "SECRET")
     return accessToken;
 }
 const validateToken = (req,res, next) =>{
