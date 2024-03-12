@@ -1,6 +1,48 @@
+// const toobusy = require('toobusy-js')
+//TROP DE CONNEXION, ATTAQUE PAR DoS (DENI DE SERVICE)
+
+
 //FRAMEWORK EXPRESS
 var express = require('express');
 var app = express();
+
+// app.use(function(req, res, next) {
+//     if (toobusy()) {
+//     res.status(503).send("Server Too Busy");
+//     } else {
+//     next();
+//     }
+//     });
+
+const session = require('express-session');
+const svgCaptcha = require('svg-captcha');
+app.use(
+    session({
+        secret:'my-secret-key',// Clé secrète pour signer la session
+        resave: false,
+        saveUninitialized: true,
+    }));
+
+    app.get('/captcha', (req, res) => {
+        // Génère un captcha SVG avec le module svg-captcha
+        constcaptcha = svgCaptcha.create();
+        // Stocke la valeur du captcha dans la session
+        req.session.captcha= captcha.text;
+        // Renvoie le captcha SVG en réponse
+        res.type('svg');
+        res.status(200).send(captcha.data);
+        });
+
+// Endpoint pour vérifier le captcha
+app.post('/verify', (req, res) => {
+    const{ userInput} = req.body;
+    // Vérifie si la valeur saisie par l'utilisateur correspond au captcha stocké dans la session
+    if (userInput=== req.session.captcha) {
+    res.status(200).send('Captcha isvalid!');
+    } else{
+    res.status(400).send('Captcha isinvalid!');
+    }
+    });
 
 var path = require('path'); //LIRE LES FICHIERS HTML
 
@@ -52,19 +94,23 @@ var Categorie = require('./modeles/Categorie')
 
 //INSCRIPTION
 app.post('/api/signup', function(req, res){
+  
     const Data = new User({
         name: req.body.name,
         firstname: req.body.firstname,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password,10),
         admin: false,
+        sexe: req.body.sexe
     })
     Data.save().then(()=>{
         console.log("Utilisateur ajouté");
         res.redirect('http://localhost:3000/login');
-
-    }).catch(err => {console.log(err)});
-})
+    }).catch(err => {
+        console.error(err);
+        res.status(404).json("Cette adresse e-mail est déjà utilisée ");
+      });
+  });   
 
 
 // Affichage formulaire inscription
@@ -96,7 +142,7 @@ app.post('/api/login', function(req, res){
             maxAge: 1000* 60*60*24*30,  //1 mois:1000ms * 60s * 60min * 24h * 30j
             httpOnly: true
         });
-       res.redirect("http://localhost:3000/portefeuille")
+       res.redirect("http://localhost:3000/allspend")
 
 
         //res.render('Userpage', {data : user})
@@ -143,7 +189,7 @@ app.post('/submit-spend', function(req, res){
    } )
    Data.save().then(()=>{
     console.log("Dépense ajoutée");
-    res.redirect('http://localhost:3000/portefeuille')
+    res.redirect('http://localhost:3000/allspend')
     
     }).catch(err => {console.log(err)});;
 });
@@ -152,8 +198,6 @@ app.get('/allspend', function(req, res){
     Spend.find().then((data) => {
      
          //res.render('Allspend', {data: data});
-     
-     
          // res.json({data: data});
        res.json(data);
     })
@@ -173,7 +217,7 @@ app.delete('/spend/delete/:id', function (req, res) {
     Spend.findOneAndDelete({
         _id: req.params.id
     }).then(() => { console.log("Data deleted successfully");
-    res.redirect('http://localhost:3000/portefeuille');
+    res.redirect('http://localhost:3000/allspend');
      }).catch(err => {console.log(err)});
 });
 
@@ -190,7 +234,7 @@ app.put('/spend/edit/:id', function (req, res) {
     Spend.updateOne({_id: req.params.id},{$set:Data}).then(
         (data) => {
         console.log(data);
-        res.redirect('http://localhost:3000/portefeuille')
+        res.redirect('http://localhost:3000/allspend')
         }
       ).catch (err => console.log(err));
 });
@@ -219,3 +263,4 @@ app.get('/allcategories', function(req, res){
 var server = app.listen(5000, function(){
     console.log('server listening on port 5000');
 })
+module.exports = app
