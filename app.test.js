@@ -59,7 +59,7 @@ describe("Test express Api", () => {
             remarque_depense: "Remarque"
         })
 
-        .expect("Content-Type", "application/json; charset=utf-8")
+        .expect("Content-Type", "text/plain; charset=utf-8")
 
         .expect(201)
         .then((response) => {
